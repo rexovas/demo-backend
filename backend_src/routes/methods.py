@@ -3,6 +3,7 @@ from backend_src import cache
 from pathlib import Path
 from typing import Any, Tuple
 import pandas as pd
+import numpy as np
 import json
 
 # data_file = Path("data/NCHS_-_Leading_Causes_of_Death__United_States.csv")
@@ -21,7 +22,7 @@ def health_check() -> str:
 def table_data() -> Any:
     df = pd.read_csv(data_file)
     # print(len(df))
-    data = df.head(100).to_json(orient="split")
+    data = df.to_json(orient="split")
     # data = df.to_json(orient="split")
     return data
     # data = df.to_json(orient="split")
@@ -37,9 +38,13 @@ def table_data() -> Any:
 # @cache.cached(query_string=True)
 def filter_list() -> Any:
     column, query = request.args.get("column"), request.args.get("search")
+    # column = column.replace('-', '')
     df = pd.read_csv(data_file)
     df.columns = [col.lower().replace(" ", "") for col in df.columns]
-    unique_values = df.loc[:, column].unique()
+    unique_cause_values = df.loc[:, 'causename'].unique()
+    unique_state_values = df.loc[:, 'state'].unique()
+    unique_values = np.concatenate([unique_cause_values, unique_state_values])
+
     if query:
         query = query.lower()
         valid = [query == val.lower()[0: len(query)] for val in unique_values]
@@ -47,7 +52,8 @@ def filter_list() -> Any:
 
     values = []
     for val in unique_values:
-        item = {"value": val.lower().replace(" ", "-"), "label": val}
+        # item = {"value": val.lower().replace(" ", "-"), "label": val}
+        item = {"value": val, "label": val}
         values.append(item)
 
     response = {"result": values}
