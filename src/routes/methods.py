@@ -23,7 +23,7 @@ def table_data() -> Any:
 
 @cache.cached(query_string=True)
 def filter_list() -> Any:
-    column, query = request.args.get("column"), request.args.get("search")
+    query = request.args.get("search")
     df = pd.read_csv(data_file)
     df.columns = [col.lower().replace(" ", "") for col in df.columns]
     unique_causes = df.loc[:, "causename"].unique()
