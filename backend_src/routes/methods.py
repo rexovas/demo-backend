@@ -20,19 +20,39 @@ def health_check() -> str:
 # @cache.cached()
 def table_data() -> Any:
     df = pd.read_csv(data_file)
-    print(df)
-    print("DID THIS RUN?")
-    with open(data_file) as f:
-        data = f.read()
-        return df
+    # print(len(df))
+    data = df.head(100).to_json(orient="split")
+    # data = df.to_json(orient="split")
+    return data
+    # data = df.to_json(orient="split")
+    # print(data)
+    # with open(data_file) as json_file:
+    #     data = json.load(json_file)
+    #     return data
 
 
 # return send_file(data_file, attachment_filename="data.csv")
 
 
-@cache.cached(query_string=True)
-def filter_auto_complete() -> Tuple[str]:
-    return None
+# @cache.cached(query_string=True)
+def filter_list() -> Any:
+    column, query = request.args.get("column"), request.args.get("search")
+    df = pd.read_csv(data_file)
+    df.columns = [col.lower().replace(" ", "") for col in df.columns]
+    unique_values = df.loc[:, column].unique()
+    if query:
+        query = query.lower()
+        valid = [query == val.lower()[0: len(query)] for val in unique_values]
+        unique_values = unique_values[valid]
+
+    values = []
+    for val in unique_values:
+        item = {"value": val.lower().replace(" ", "-"), "label": val}
+        values.append(item)
+
+    response = {"result": values}
+
+    return response
 
 
 def filter_data() -> Tuple[str]:
