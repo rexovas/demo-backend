@@ -5,7 +5,7 @@ from typing import Any
 import pandas as pd
 import numpy as np
 
-data_file = Path(__file__).parent / Path("../data/data.csv")
+data_file = Path(__file__).parent / Path("../data/NCHS_-_Leading_Causes_of_Death__United_States.csv")
 
 
 def health_check() -> str:
