@@ -1,7 +1,7 @@
 from flask import request
-from backend_src.routes import routes
+from src.routes import routes
 from typing import Any
-from backend_src import app
+from src import app
 
 
 @app.before_request

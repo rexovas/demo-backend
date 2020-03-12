@@ -1,5 +1,5 @@
 from flask import request
-from backend_src import cache
+from src import cache
 from pathlib import Path
 from typing import Any
 import pandas as pd
@@ -12,7 +12,6 @@ def health_check() -> str:
     return "pong"
 
 
-@cache.cached(query_string=True)
 def table_data() -> Any:
     query = request.args.get("filter")
     if not query:
@@ -24,7 +23,7 @@ def table_data() -> Any:
 
 @cache.cached(query_string=True)
 def filter_list() -> Any:
-    column, query = request.args.get("column"), request.args.get("search")
+    query = request.args.get("search")
     df = pd.read_csv(data_file)
     df.columns = [col.lower().replace(" ", "") for col in df.columns]
     unique_causes = df.loc[:, "causename"].unique()
@@ -51,35 +50,18 @@ def filter_data(query) -> Any:
     df = pd.read_csv(data_file)
     init_columns = df.columns
     df.columns = [col.lower().replace(" ", "") for col in df.columns]
-    cause_values = df.loc[:, "causename"]
-    state_values = df.loc[:, "state"]
+    valid_causes = df.loc[:, "causename"].isin(filters)
+    valid_states = df.loc[:, "state"].isin(filters)
+    causes = df.loc[valid_causes]
+    states = df.loc[valid_states]
 
-    cause_data = []
-    state_data = []
-    for item in filters:
-        valid_cause = [item == val for val in cause_values]
-        valid_state = [item == val for val in state_values]
-        cause_results = df.loc[valid_cause]
-        state_results = df.loc[valid_state]
-        cause_data.append(cause_results)
-        state_data.append(state_results)
-
-    cause_data = pd.concat(cause_data)
-    unique_causes = cause_data.loc[:, "causename"].unique()
-    state_data = pd.concat(state_data)
-    unique_states = state_data.loc[:, "state"].unique()
-    full_data = pd.concat([cause_data, state_data])
-
-    cause_rows = full_data.loc[:, "causename"].isin(unique_causes)
-    state_rows = full_data.loc[:, "state"].isin(unique_states)
-
-    if unique_causes.size != 0:
-        if unique_states.size != 0:
-            result = full_data.loc[cause_rows & state_rows]
+    if causes.size != 0:
+        if states.size != 0:
+            result = df.loc[valid_causes & valid_states]
         else:
-            result = cause_data
+            result = causes
     else:
-        result = state_data
+        result = states
 
     result.columns = init_columns
     response = result.to_json(orient="split")
