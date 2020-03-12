@@ -26,8 +26,23 @@ Install project dependencies using requirements.txt file
 
 Note: it is not recommended to use `conda install` when installing requirements for this project as it has been known to cause problems
 
-## Running the  app
+## Installing Redis
 
+This project uses Redis for caching and requires `redis-server` to be installed on the host machine
+
+To install on Ubuntu/Linux:
+`sudo apt update && sudo apt install redis-server`
+
+To install on Mac:
+`brew install redis`
+
+Windows requires a port of redis which can be downloaded from [here](https://github.com/dmajkic/redis/downloads) (these binaries have also been included in this repository for convenience)
+
+[Detailed instructions available here](https://redislabs.com/ebook/appendix-a/a-3-installing-on-windows/a-3-2-installing-redis-on-window/)
+
+once Redis has been installed, you can simply run `redis-server` to start the process in the background
+
+## Running the  app
 Before running, ensure that the `FLASK_DEBUG` environment variable has been set to either `1` for on or `0` for off
 
 #### Windows
