@@ -1,4 +1,4 @@
-from backend_src.routes.methods import health_check, table_data, filter_list
+from src.routes.methods import health_check, table_data, filter_list
 from typing import NoReturn
 from flask import Flask
 

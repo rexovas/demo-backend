@@ -1,5 +1,5 @@
 from flask import g
-from backend_src import helpers
+from src import helpers
 
 
 def get_arg(req, key: str) -> str:
