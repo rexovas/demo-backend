@@ -1,49 +1,37 @@
-from flask import send_file, request
+from flask import request
 from backend_src import cache
 from pathlib import Path
-from typing import Any, Tuple
+from typing import Any
 import pandas as pd
 import numpy as np
-import json
 
-# data_file = Path("data/NCHS_-_Leading_Causes_of_Death__United_States.csv")
-data_file = Path(__file__).parent / Path(
-    "../data/NCHS_-_Leading_Causes_of_Death__United_States.csv"
-)
-# data_file = Path(__file__).parent / Path('../data/nchsrows.json')
+data_file = Path(__file__).parent / Path("../data/data.csv")
 
 
 def health_check() -> str:
-    print("I RAN THIS TIME YA BASTARD")
     return "pong"
 
 
-# @cache.cached()
+@cache.cached(query_string=True)
 def table_data() -> Any:
-    df = pd.read_csv(data_file)
-    # print(len(df))
-    data = df.to_json(orient="split")
-    # data = df.to_json(orient="split")
-    return data
-    # data = df.to_json(orient="split")
-    # print(data)
-    # with open(data_file) as json_file:
-    #     data = json.load(json_file)
-    #     return data
+    print("TABLE DATA METHOD RAN")
+    query = request.args.get("filter")
+    if not query:
+        df = pd.read_csv(data_file)
+        response = df.to_json(orient="split")
+        return response
+    return filter_data(query)
 
 
-# return send_file(data_file, attachment_filename="data.csv")
-
-
-# @cache.cached(query_string=True)
+@cache.cached(query_string=True)
 def filter_list() -> Any:
+    print("FILTER LIST METHOD RAN")
     column, query = request.args.get("column"), request.args.get("search")
-    # column = column.replace('-', '')
     df = pd.read_csv(data_file)
     df.columns = [col.lower().replace(" ", "") for col in df.columns]
-    unique_cause_values = df.loc[:, 'causename'].unique()
-    unique_state_values = df.loc[:, 'state'].unique()
-    unique_values = np.concatenate([unique_cause_values, unique_state_values])
+    unique_causes = df.loc[:, "causename"].unique()
+    unique_states = df.loc[:, "state"].unique()
+    unique_values = np.concatenate([unique_causes, unique_states])
 
     if query:
         query = query.lower()
@@ -52,7 +40,6 @@ def filter_list() -> Any:
 
     values = []
     for val in unique_values:
-        # item = {"value": val.lower().replace(" ", "-"), "label": val}
         item = {"value": val, "label": val}
         values.append(item)
 
@@ -61,17 +48,42 @@ def filter_list() -> Any:
     return response
 
 
-def filter_data() -> Tuple[str]:
-    return None
+def filter_data(query) -> Any:
+    print("FILTER DATA METHOD RAN")
+    filters = query.split(",")
+    df = pd.read_csv(data_file)
+    init_columns = df.columns
+    df.columns = [col.lower().replace(" ", "") for col in df.columns]
+    cause_values = df.loc[:, "causename"]
+    state_values = df.loc[:, "state"]
 
+    cause_data = []
+    state_data = []
+    for item in filters:
+        valid_cause = [item == val for val in cause_values]
+        valid_state = [item == val for val in state_values]
+        cause_results = df.loc[valid_cause]
+        state_results = df.loc[valid_state]
+        cause_data.append(cause_results)
+        state_data.append(state_results)
 
-# def search_table_data() -> Tuple[str]:
-#     return None
-#
-#
-# def cache_search_results() -> Tuple[str]:
-#     return None
-#
-#
-# def search_cache() -> Tuple[str]:
-#     return None
+    cause_data = pd.concat(cause_data)
+    unique_causes = cause_data.loc[:, "causename"].unique()
+    state_data = pd.concat(state_data)
+    unique_states = state_data.loc[:, "state"].unique()
+    full_data = pd.concat([cause_data, state_data])
+
+    cause_rows = full_data.loc[:, "causename"].isin(unique_causes)
+    state_rows = full_data.loc[:, "state"].isin(unique_states)
+
+    if unique_causes.size != 0:
+        if unique_states.size != 0:
+            result = full_data.loc[cause_rows & state_rows]
+        else:
+            result = cause_data
+    else:
+        result = state_data
+
+    result.columns = init_columns
+    response = result.to_json(orient="split")
+    return response
