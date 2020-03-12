@@ -5,7 +5,10 @@ from flask_caching import Cache
 from flask_cors import CORS
 import os
 
-debug = os.environ["FLASK_DEBUG"]
+debug = False
+if os.environ.get("FLASK_DEBUG"):
+    debug = os.environ["FLASK_DEBUG"]
+
 
 app = Flask(__name__)
 CORS(app)

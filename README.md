@@ -43,13 +43,6 @@ Windows requires a port of redis which can be downloaded from [here](https://git
 once Redis has been installed, you can simply run `redis-server` to start the process in the background
 
 ## Running the  app
-Before running, ensure that the `FLASK_DEBUG` environment variable has been set to either `1` for on or `0` for off
-
-#### Windows
-In cmd.exe `set FLASK_DEBUG=0`
-
-#### Bash
-`FLASK_DEBUG=0`
 
 In the project/src directory, you can run:
 
