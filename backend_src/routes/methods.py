@@ -14,7 +14,6 @@ def health_check() -> str:
 
 @cache.cached(query_string=True)
 def table_data() -> Any:
-    print("TABLE DATA METHOD RAN")
     query = request.args.get("filter")
     if not query:
         df = pd.read_csv(data_file)
@@ -25,7 +24,6 @@ def table_data() -> Any:
 
 @cache.cached(query_string=True)
 def filter_list() -> Any:
-    print("FILTER LIST METHOD RAN")
     column, query = request.args.get("column"), request.args.get("search")
     df = pd.read_csv(data_file)
     df.columns = [col.lower().replace(" ", "") for col in df.columns]
@@ -49,7 +47,6 @@ def filter_list() -> Any:
 
 
 def filter_data(query) -> Any:
-    print("FILTER DATA METHOD RAN")
     filters = query.split(",")
     df = pd.read_csv(data_file)
     init_columns = df.columns
