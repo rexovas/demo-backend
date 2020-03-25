@@ -1,5 +1,5 @@
 
-# Crossix Assignment Back-End
+# Demo Project Back-End
 ## Author: David Lovas
 
 This project is a basic Flask application enabling users to retrieve data provided by the National Center for Health Statistics concerning death rates for the top 10 causes of death in the United States.
