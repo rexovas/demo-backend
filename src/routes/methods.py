@@ -33,7 +33,7 @@ def filter_list() -> Any:
 
     if query:
         query = query.lower()
-        valid = [query == val.lower()[0 : len(query)] for val in unique_values]
+        valid = [query == value.lower()[0: len(query)] for value in unique_values]
         unique_values = unique_values[valid]
 
     values = [{"value": value, "label": value} for value in unique_values]
