@@ -12,7 +12,7 @@ To run this project it is recommended to create a new Conda environment (or virt
 
 ### Example:
 
-create a new environment
+create a new environmen
 
 ### `conda create -n <envname> pip`
 
