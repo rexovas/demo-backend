@@ -5,7 +5,9 @@ from typing import Any
 import pandas as pd
 import numpy as np
 
-data_file = Path(__file__).parent / Path("../data/NCHS_-_Leading_Causes_of_Death__United_States.csv")
+data_file = Path(__file__).parent / Path(
+    "../data/NCHS_-_Leading_Causes_of_Death__United_States.csv"
+)
 
 
 def health_check() -> str:
@@ -31,14 +33,10 @@ def filter_list() -> Any:
 
     if query:
         query = query.lower()
-        valid = [query == val.lower()[0: len(query)] for val in unique_values]
+        valid = [query == value.lower()[0: len(query)] for value in unique_values]
         unique_values = unique_values[valid]
 
-    values = []
-    for val in unique_values:
-        item = {"value": val, "label": val}
-        values.append(item)
-
+    values = [{"value": value, "label": value} for value in unique_values]
     response = {"result": values}
 
     return response
