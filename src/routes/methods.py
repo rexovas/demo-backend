@@ -27,8 +27,6 @@ def filter_list() -> Any:
     query = request.args.get("search")
     df = pd.read_csv(data_file)
     df.columns = [col.lower().replace(" ", "") for col in df.columns]
-    # unique_causes = df.loc[:, "causename"].unique()
-    #     # unique_states = df.loc[:, "state"].unique()
     unique_values = df.loc[:, column].unique()
 
     if query:
