@@ -49,7 +49,7 @@ Start Redis by typing
 
 or launching the redis-server executable on Windows.
 
-In the [strong]project/src[/strong] directory, you can run:
+In the **project/src** directory, you can run:
 
 ### `python -m flask run -h 0.0.0.0`
 
