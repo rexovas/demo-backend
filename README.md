@@ -12,7 +12,7 @@ To run this project it is recommended to create a new Conda environment (or virt
 
 ### Example:
 
-create a new environmen
+create a new environment
 
 ### `conda create -n <envname> pip`
 
@@ -44,7 +44,12 @@ once Redis has been installed, you can simply run `redis-server` to start the pr
 
 ## Running the  app
 
-In the project/src directory, you can run:
+Start Redis by typing
+### `redis-server`
+
+or launching the redis-server executable on Windows.
+
+In the [strong]project/src[/strong] directory, you can run:
 
 ### `python -m flask run -h 0.0.0.0`
 
