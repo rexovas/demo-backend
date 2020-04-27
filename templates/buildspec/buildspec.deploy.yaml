@@ -19,7 +19,7 @@ phases:
       - export TAG="$STAGE-1.0.0"
       - docker build . -t 900031763146.dkr.ecr.us-east-1.amazonaws.com/demo-backend:$TAG
 
-      # - $(aws ecr get-login --no-include-email)
+      - $(aws ecr get-login --no-include-email)
       - docker push 900031763146.dkr.ecr.us-east-1.amazonaws.com/demo-backend:$TAG
       - kops export kubecfg ue1-k8s.rex.vision --state s3://rexvision-k8s-state-store
 
