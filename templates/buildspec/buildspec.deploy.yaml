@@ -7,7 +7,7 @@ phases:
     commands:
       - which python
       - which pip
-      - pip install requirements.txt
+      - pip install -r requirements.txt
       # - apt-get update && apt-get install jq
       # - apt-get update
       # - curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl chmod +x ./kubectl; mv ./kubectl /usr/bin/kubectl

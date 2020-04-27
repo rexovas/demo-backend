@@ -307,7 +307,8 @@ Resources:
               Configuration:
                 Owner: rexovas
                 Repo: demo-backend
-                Branch: master 
+                Branch: development 
+                # Branch: master 
                 OAuthToken: 'test'
                 #   Ref: GitHubSecret
               OutputArtifacts:
