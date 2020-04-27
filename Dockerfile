@@ -4,7 +4,7 @@ FROM python:3.8
 WORKDIR /usr/src/app
 
 # Bundle Source
-# COPY . .
+COPY . .
 
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install redis-server -y && \
