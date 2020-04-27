@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 # Bundle Source
 # COPY . .
 
-RUN apt-get update && apt-get upgrade -y \
+RUN echo HELLO && apt-get update && apt-get upgrade -y \
     apt-get install redis-server -y && \
     pip install -r requirements.txt
 # If you are building your code for production
