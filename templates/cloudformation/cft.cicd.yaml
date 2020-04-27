@@ -113,7 +113,7 @@ Resources:
       VpcConfig:
         VpcId: vpc-0e2111a14642fc1fa
         Subnets: [subnet-068fb08fa4aa3beca]
-        SecurityGroupIds: [sg-0cca726bab716665c]
+        SecurityGroupIds: [sg-0cca726bab716665c, sg-0f9871804bff0b2e5]
       Name: 'demo-backend-codebuild-deploy-prod'
       ServiceRole:
         Ref: CodeBuildRole
