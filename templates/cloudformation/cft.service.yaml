@@ -1,0 +1,80 @@
+Description: Demo Backend user, role and S3 bucket
+
+Parameters:
+  stage:
+    Type: String
+    Default: "development"
+
+  Region:
+    Type: String
+    Default: "us-east-1"
+
+  AccountId:
+    Type: String
+    Default: "900031763146"
+
+Conditions:
+  isProd:
+    Fn::Equals:
+      - Ref: stage
+      - "production"
+
+Resources:
+    demoBackendRoute53:
+      Type: AWS::Route53::RecordSet
+      Properties:
+        HostedZoneId: Z050060699L3CKSWFLIF
+        Name:
+          Fn::If:
+            - isProd
+            - demo.api.rex.vision
+            - Fn::Join:
+                - ''
+                - - demo-
+                  - Ref: stage
+                  - .api.rex.vision
+        Type: CNAME
+        ResourceRecords:
+          - "stargate.rex.vision"
+        TTL: "30" # set to 300 once tested
+    demoBackendRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Statement:
+            - Effect: Allow
+              Action: sts:AssumeRole
+              Principal:
+                AWS: arn:aws:iam::900031763146:role/masters.ue1-k8s.rex.vision
+        RoleName:
+          Fn::Join:
+            - "-"
+            - - "demo-backend"
+              - Ref: stage
+
+    # demoBackendPolicy:
+    #   Type: AWS::IAM::Policy
+    #   Properties:
+    #     PolicyName:
+    #       Fn::Join:
+    #         - "-"
+    #         - - demo-backend-policy
+    #           - Ref: stage
+    #     Roles:
+    #       - Ref: demoBackendRole
+    #     PolicyDocument:
+    #       Version : "2012-10-17"
+    #       Statement:
+    #         - Effect: Allow
+    #           Action: ["cognito-idp:AdminGetUser"]
+    #           Resource:
+    #             Fn::If:
+    #               - isProd
+    #               - arn:aws:cognito-idp:us-east-1:900031763146:userpool/us-east-1_lGGjFA9k2
+    #               - arn:aws:cognito-idp:us-east-1:900031763146:userpool/us-east-1_EU0PnxwyG
+    #           Action: ["SNS:Publish"]
+    #           Resource:
+    #             Fn::If:
+    #               - isProd
+    #               - arn:aws:sns:us-east-1:900031763146:ers-production-Topic-LP3TJOCU3EWE
+    #               - arn:aws:sns:us-east-1:900031763146:ers-staging-Topic-SVYROUMXZY3V
