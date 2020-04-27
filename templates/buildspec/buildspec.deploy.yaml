@@ -9,9 +9,9 @@ phases:
       # - pip install -r requirements.txt
       # - apt-get update && apt-get install jq
       # - apt-get update
-      - curl -Los kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x ./kubectl && mv ./kubectl /usr/bin/kubectl
-      - curl -Los kops https://github.com/kubernetes/kops/releases/download/1.11.1/kops-linux-amd64 && chmod +x kops && mv kops /usr/bin/kops
-      - curl -LOs https://git.io/get_helm.sh && chmod 700 ./get_helm.sh && ./get_helm.sh --version v3.2.0 && rm get_helm.sh
+      - curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x ./kubectl && mv ./kubectl /usr/bin/kubectl
+      - curl -Lo kops https://github.com/kubernetes/kops/releases/download/1.11.1/kops-linux-amd64 && chmod +x kops && mv kops /usr/bin/kops
+      - curl -LO https://git.io/get_helm.sh && chmod 700 ./get_helm.sh && ./get_helm.sh --version v3.2.0 && rm get_helm.sh
   build:
     commands:
       # - export VERSION=$(node -e "console.log(require('./package.json').version)")
