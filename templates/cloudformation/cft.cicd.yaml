@@ -1,0 +1,333 @@
+Description: CI/CD Pipeline for Demo Backend
+
+# Parameters:
+#   GitHubSecret:
+#     Type: AWS::SSM::Parameter::Value<String>
+#     Default: GitHubReadOnlyToken
+
+Resources:
+  ECR:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: demo-backend
+
+  # PullRequestCodebuildProject:
+  #   Type: AWS::CodeBuild::Project
+  #   Properties:
+  #     Name: 'demo-backend-pull-request'
+  #     ServiceRole:
+  #       Ref: CodeBuildRole
+  #     Artifacts:
+  #       Type: no_artifacts
+  #     Environment:
+  #       Type: LINUX_CONTAINER
+  #       ComputeType: BUILD_GENERAL1_LARGE
+  #       Image: aws/codebuild/nodejs:8.11.0
+  #       PrivilegedMode: true
+  #     Source:
+  #       Type: GITHUB
+  #       InsecureSsl: false
+  #       Auth:
+  #         Type: OAUTH
+  #         Resource:
+  #           Ref: GitHubSecret
+  #       Location: https://github.com/rexovas/demo-backend.git
+  #       BuildSpec: buildspec/buildspec.pull-request.yaml
+  #     Triggers:
+  #       Webhook: true
+  #     TimeoutInMinutes: 60
+
+  # UnitTestCodeBuildProject:
+  #   Type: AWS::CodeBuild::Project
+  #   Properties:
+  #     Name: 'demo-backend-codebuild-unit'
+  #     ServiceRole:
+  #       Ref: CodeBuildRole
+  #     Artifacts:
+  #       Type: CODEPIPELINE
+  #     Environment:
+  #       Type: LINUX_CONTAINER
+  #       ComputeType: BUILD_GENERAL1_LARGE
+  #       Image: aws/codebuild/nodejs:8.11.0
+  #       EnvironmentVariables:
+  #         - Name: STAGE
+  #           Type: PLAINTEXT
+  #           Value: development
+  #       PrivilegedMode: true
+  #     Source:
+  #       Type: CODEPIPELINE
+  #       BuildSpec: buildspec/buildspec.unit.yaml
+  #     TimeoutInMinutes: 10
+
+  # IntegrationTestCodeBuildProject:
+  #   Type: AWS::CodeBuild::Project
+  #   Properties:
+  #     Name: 'demo-backend-codebuild-int'
+  #     ServiceRole:
+  #       Ref: CodeBuildRole
+  #     Artifacts:
+  #       Type: CODEPIPELINE
+  #     Environment:
+  #       Type: LINUX_CONTAINER
+  #       ComputeType: BUILD_GENERAL1_LARGE
+  #       Image: aws/codebuild/nodejs:8.11.0
+  #       EnvironmentVariables:
+  #         - Name: STAGE
+  #           Type: PLAINTEXT
+  #           value: development
+  #       PrivilegedMode: true
+  #     Source:
+  #       Type: CODEPIPELINE
+  #       BuildSpec: buildspec/buildspec.integration.yaml
+  #     TimeoutInMinutes: 10
+
+  # DevelopmentDeployCodeBuildProject:
+  #   Type: AWS::CodeBuild::Project
+  #   Properties:
+  #     VpcConfig:
+  #       VpcId: vpc-0e2111a14642fc1fa
+  #       Subnets: [subnet-068fb08fa4aa3beca]
+  #       SecurityGroupIds: [sg-0cca726bab716665c]
+  #     Name: 'demo-backend-codebuild-deploy-development'
+  #     ServiceRole:
+  #       Ref: CodeBuildRole
+  #     Artifacts:
+  #       Type: CODEPIPELINE
+  #     Environment:
+  #       Type: LINUX_CONTAINER
+  #       ComputeType: BUILD_GENERAL1_LARGE
+  #       Image: aws/codebuild/nodejs:8.11.0
+  #       EnvironmentVariables:
+  #         - Name: STAGE
+  #           Type: PLAINTEXT
+  #           value: development
+  #       PrivilegedMode: true
+  #     Source:
+  #       Type: CODEPIPELINE
+  #       BuildSpec: buildspec/buildspec.deploy.yaml
+  #     TimeoutInMinutes: 10
+
+  ProductionDeployCodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      VpcConfig:
+        VpcId: vpc-0e2111a14642fc1fa
+        Subnets: [subnet-068fb08fa4aa3beca]
+        SecurityGroupIds: [sg-0cca726bab716665c]
+      Name: 'demo-backend-codebuild-deploy-prod'
+      ServiceRole:
+        Ref: CodeBuildRole
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_LARGE
+        Image: aws/codebuild/standard:4.0
+        EnvironmentVariables:
+          - Name: STAGE
+            Type: PLAINTEXT
+            Value: production
+        PrivilegedMode: true
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: templates/buildspec/buildspec.deploy.yaml
+      TimeoutInMinutes: 10
+
+  CodePipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: demo-backend-CodePipelineRole
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: ['sts:AssumeRole']
+          Effect: Allow
+          Principal:
+            Service: [codebuild.amazonaws.com, codepipeline.amazonaws.com]
+        Version: '2012-10-17'
+      Policies:
+        - PolicyName: CodeBuildAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - 'logs:*'
+                - 'ssm:GetParameters'
+                - 'sts:AssumeRole'
+                - 'secretsmanager:GetSecretValue'
+                - 'codebuild:*'
+                - 's3:*'
+                - 'ec2:*'
+                Effect: Allow
+                Resource: '*'
+              - Action:
+                - 'secretsmanager:GetSecretValue'
+                Effect: Allow
+                Resource: 'arn:aws:secretsmanager:us-east-1:900031763146:secret:*'
+
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: demoBackend-CodebuildRole
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: ['sts:AssumeRole']
+          Effect: Allow
+          Principal:
+            Service: [codebuild.amazonaws.com,  codepipeline.amazonaws.com]
+        Version: '2012-10-17'
+      Policies:
+        - PolicyName: CodeBuildAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - 'logs:*'
+                - 'ecs:*'
+                - 'ssm:GetParameters'
+                - 'ecr:*'
+                - 's3:*'
+                - 'cloudformation:*'
+                - 'ec2:*'
+                - 'iam:*'
+                # - 'route53:*'
+                Effect: Allow
+                Resource: '*'
+              - Action:
+                - 'secretsmanager:GetSecretValue'
+                Effect: Allow
+                Resource: 'arn:aws:secretsmanager:us-east-1:900031763146:secret:*'
+
+  ArtifactBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: demo-backend-codebuild-artifacts
+
+  # StagingCodePipeline:
+  #   Type: AWS::CodePipeline::Pipeline
+  #   Properties:
+  #     Name: DemoBackendCodePipelineStaging
+  #     ArtifactStore:
+  #       Location:
+  #         Ref: ArtifactBucket
+  #       Type: S3  # this is literally the only possible option. https://docs.aws.amazon.com/codepipeline/latest/APIReference/API_ArtifactStore.html
+  #     RestartExecutionOnUpdate: true
+  #     RoleArn:
+  #       Fn::GetAtt: CodePipelineRole.Arn
+  #     Stages:
+  #       - Name: Github
+  #         Actions:
+  #           - Name: Source
+  #             ActionTypeId:
+  #               Category: Source
+  #               Owner: ThirdParty
+  #               Provider: GitHub
+  #               Version: 1
+  #             Configuration:
+  #               Owner: rexovas 
+  #               Repo: demo-backend
+  #               Branch: master
+  #               OAuthToken:
+  #                 Ref: GitHubSecret
+  #             OutputArtifacts:
+  #               - Name: demoBackendCode
+  #             RunOrder: 1
+        # - Name: Test
+        #   Actions:
+        #     - Name: Unit
+        #       ActionTypeId:
+        #         Category: Build
+        #         Owner: AWS
+        #         Provider: CodeBuild
+        #         Version: 1
+        #       Configuration:
+        #         ProjectName:
+        #           Ref: UnitTestCodeBuildProject
+        #       InputArtifacts:
+        #         - Name: demoBackendCode
+        #       OutputArtifacts:
+        #         - Name: TestedDemoBackendCode
+        #       RoleArn:
+        #         Fn::GetAtt: CodePipelineRole.Arn
+        #       RunOrder: 1
+        #     - Name: Integration
+        #       ActionTypeId:
+        #         Category: Build
+        #         Owner: AWS
+        #         Provider: CodeBuild
+        #         Version: 1
+        #       Configuration:
+        #         ProjectName:
+        #           Ref: IntegrationTestCodeBuildProject
+        #       InputArtifacts:
+        #         - Name: demoBackendCode
+        #       OutputArtifacts:
+        #         - Name: IntTestedDemoBackendCode
+        #       RoleArn:
+        #         Fn::GetAtt: CodePipelineRole.Arn
+        #       RunOrder: 1
+        # - Name: DeployDevelopment
+        #   Actions:
+        #   - Name: Deploy
+        #     ActionTypeId:
+        #       Category: Build
+        #       Owner: AWS
+        #       Provider: CodeBuild
+        #       Version: 1
+        #     Configuration:
+        #       ProjectName:
+        #         Ref: DevelopmentDeployCodeBuildProject
+        #     InputArtifacts:
+        #       - Name: demoBackendCode
+        #     OutputArtifacts:
+        #       - Name: DevelopmentDeploy
+        #     RoleArn:
+        #       Fn::GetAtt: CodePipelineRole.Arn
+        #     RunOrder: 1
+
+  ProductionCodePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: DemoBackendCodePipelineProduction
+      ArtifactStore:
+        Location:
+          Ref: ArtifactBucket
+        Type: S3  # this is literally the only possible option. https://docs.aws.amazon.com/codepipeline/latest/APIReference/API_ArtifactStore.html
+      RestartExecutionOnUpdate: true
+      RoleArn:
+        Fn::GetAtt: CodePipelineRole.Arn
+      Stages:
+        - Name: Github
+          Actions:
+            - Name: Source
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Provider: GitHub
+                Version: 1
+              Configuration:
+                Owner: rexovas
+                Repo: demo-backend
+                Branch: master 
+                OAuthToken: 'test'
+                #   Ref: GitHubSecret
+              OutputArtifacts:
+                - Name: demoBackendCode
+              RunOrder: 1
+        - Name: DeployProduction
+          Actions:
+          - Name: Test-Build-Deploy
+            ActionTypeId:
+              Category: Build
+              Owner: AWS
+              Provider: CodeBuild
+              Version: 1
+            Configuration:
+              ProjectName:
+                Ref: ProductionDeployCodeBuildProject
+            InputArtifacts:
+              - Name: demoBackendCode
+            OutputArtifacts:
+              - Name: BuiltDemoBackendProdCode
+            RoleArn:
+              Fn::GetAtt: CodePipelineRole.Arn
+            RunOrder: 1
