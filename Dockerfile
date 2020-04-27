@@ -1,14 +1,14 @@
-FROM python
+FROM python:3.8
 
 # Create app directory
 WORKDIR /usr/src/app
 
 # Bundle Source
-COPY . .
+# COPY . .
 
-RUN apt-get update && \
+RUN apt-get update && apt-get upgrade \
     apt-get install redis-server -y && \
-    npm install
+    pip install -r requirements.txt
 # If you are building your code for production
 # RUN npm install --only=production
 
