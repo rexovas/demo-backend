@@ -6,19 +6,15 @@ replicaCount: 1
 
 image:
   repository: 900031763146.dkr.ecr.us-east-1.amazonaws.com/demo-backend
-  tag: development-0.0.2
+  # tag: development-0.0.2
   pullPolicy: Always
 
-ingress:
-  enabled: true
+# ingress:
+#   enabled: true
 
 service:
-  type: ClusterIP
-  port: 3000 
+  # type: ClusterIP
+  port: 5000 
 
-aws:
-  access_key:
-  secret_key:
-
-# data:
-#   environment:
+data:
+  environment:

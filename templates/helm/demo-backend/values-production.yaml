@@ -5,21 +5,17 @@
 replicaCount: 3
 
 image:
-  repository: 900031763146.dkr.ecr.us-east-1.amazonaws.com/demo-backend
-  tag: production-0.0.1
+  # repository: 900031763146.dkr.ecr.us-east-1.amazonaws.com/demo-backend
+  # tag: production-0.0.1
   # pullPolicy: IfNotPresent
   pullPolicy: Always
 
-ingress:
-  enabled: true
+# ingress:
+#   enabled: true
 
-service:
-  type: ClusterIP
-  port: 3000
-
-aws:
-  access_key:
-  secret_key:
+# service:
+#   type: ClusterIP
+#   port: 3000
 
 data:
   IAM_ROLE: arn:aws:iam::900031763146:role/demo-backend-production

@@ -14,5 +14,5 @@ RUN apt-get update && \
 # If you are building your code for production
 # RUN npm install --only=production
 
-EXPOSE 3000
+EXPOSE 5000
 CMD [ "sh", "scripts/start.sh" ]

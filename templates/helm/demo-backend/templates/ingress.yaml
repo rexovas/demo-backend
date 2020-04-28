@@ -1,7 +1,12 @@
-{{- if .Values.ingress.enabled -}}
+# {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "fullname" . -}}
 {{- $chart := include "chart" . -}}
-{{- $ingressPaths := .Values.ingress.paths -}}
+# {{- $ingressPaths := .Values.ingress.paths -}}
+{{- $host := .Values.ingress.host -}}
+{{- $domain := .Values.ingress.domain -}}
+{{- $port := .Values.service.port -}}
+{{- $stage := .Values.data.environment.STAGE -}}
+
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -11,20 +16,47 @@ metadata:
     helm.sh/chart: {{ $chart }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      if ($host = 'www.demo.api.rex.vision') {
+        return 308 $scheme://demo.api.rex.vision$request_uri;
+      }
   # {{- with .Values.ingress.annotations }}
   # annotations:
   #   {{- toYaml . | nindent 4 }}
   # {{- end }}
 spec:
   rules:
-  {{ if eq .Values.data.environment.STAGE "production" }}
-  - host: demo.api.rex.vision
-  {{ else }}
-  - host: demo-development.api.rex.vision
-  {{end}}
-    http:
-      paths:
-        - backend:
-            serviceName: {{ $fullName }}-service
-            servicePort: 3000 
-{{- end }}
+    {{ if eq $stage "production" }}
+    - host: {{ $host }}{{ $domain }}
+    {{ else }}
+    - host: {{ $host }}-{{ $stage }}{{ $domain }}
+    {{ end }}
+      http:
+        paths:
+          - backend:
+              serviceName: {{ $fullName }}-service
+              servicePort: {{ $port }}
+    {{ if eq $stage "production" }}
+    - host: {{'www.'}}{{ $host }}{{ $domain }}
+    {{ else }}
+    - host: {{'www.'}}{{ $host }}-{{ $stage }}{{ $domain }}
+    {{ end }}
+    - host: 
+      http:
+        paths:
+          - backend:
+              serviceName: {{ $fullName }}-service
+              servicePort: {{ $port }}
+#   {{ if eq .Values.data.environment.STAGE "production" }}
+#   - host: demo.api.rex.vision
+#   {{ else }}
+#   - host: demo-development.api.rex.vision
+#   {{end}}
+#     http:
+#       paths:
+#         - backend:
+#             serviceName: {{ $fullName }}-service
+#             servicePort: 3000 
+# {{- end }}
