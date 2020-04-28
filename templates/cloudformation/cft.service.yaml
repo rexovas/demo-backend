@@ -61,7 +61,7 @@ Resources:
                 - ''
                 - - www.
                   - Ref: Host
-                  - '' 
+                  - -
                   - Ref: Stage
                   - Ref: Domain
         Type: CNAME
