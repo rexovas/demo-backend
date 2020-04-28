@@ -2,4 +2,4 @@
 redis-server &
 sleep 5
 export FLASK_APP=src/app.py
-flask run
+flask run --port=3000
