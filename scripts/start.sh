@@ -2,4 +2,4 @@
 redis-server &
 sleep 5
 export FLASK_APP=src/app.py
-flask run -h 0.0.0.0
+flask run -h 0.0.0.0 -p 3000

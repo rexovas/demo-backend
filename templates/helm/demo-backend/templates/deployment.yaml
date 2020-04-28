@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ .Release.Name }}-deployment
   labels:
     app.kubernetes.io/name: {{ .Release.Name }}
     helm.sh/chart: {{ include "chart" . }}
@@ -19,8 +19,8 @@ spec:
       labels:
         app.kubernetes.io/name: {{ .Release.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
-      # annotations:
-      #   iam.amazonaws.com/role: {{ .Values.data.IAM_ROLE }}
+      annotations:
+        iam.amazonaws.com/role: {{ .Values.data.IAM_ROLE }}
     spec:
       containers:
         - name: {{ .Chart.Name }}
@@ -39,16 +39,16 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: {{ .Values.service.port }}
-            initialDelaySeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: {{ .Values.service.port }}
-            initialDelaySeconds: 10
+          # livenessProbe:
+          #   httpGet:
+          #     path: /health
+          #     port: {{ .Values.service.port }}
+          #   initialDelaySeconds: 10
+          # readinessProbe:
+          #   httpGet:
+          #     path: /health
+          #     port: {{ .Values.service.port }}
+          #   initialDelaySeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
 ---
@@ -89,4 +89,4 @@ spec:
     - podSelector: {} # Allow ALL pods access to these pods (over exposed ports)
     ports:
     - protocol: TCP
-      port: {{ .Values.service.port }} # This needs to match the 'containerPort' of the deployment
+      port: 3000 # This needs to match the 'containerPort' of the deployment

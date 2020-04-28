@@ -127,12 +127,6 @@ Resources:
           - Name: STAGE
             Type: PLAINTEXT
             Value: production
-          - Name: HOST
-            Value: demo
-          - Name: DOMAIN
-            Value: .api.rex.vision
-          - Name: NAME
-            Value: demo-backend
         PrivilegedMode: true
       Source:
         Type: CODEPIPELINE
