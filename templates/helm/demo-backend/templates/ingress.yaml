@@ -1,4 +1,4 @@
-{{- if .Values.ingress.enabled -}}
+# {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "fullname" . -}}
 {{- $chart := include "chart" . -}}
 # {{- $ingressPaths := .Values.ingress.paths -}}
@@ -59,4 +59,4 @@ spec:
 #         - backend:
 #             serviceName: {{ $fullName }}-service
 #             servicePort: 3000 
-{{- end }}
+# {{- end }}
