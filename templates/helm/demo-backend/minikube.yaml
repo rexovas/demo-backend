@@ -8,14 +8,13 @@ image:
   repository: localhost:5000/demo-backend
   tag: development-0.0.1
   pullPolicy: Always
-
-ingress:
-  enabled: false
-
-service:
+  
+  ingress:
+    enabled: false
+  
+  service:
   type: NodePort
   port: 8080
 
-data:
-  environment:
-    STAGE: "development"
+# data:
+#   environment:

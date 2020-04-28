@@ -17,9 +17,9 @@ metadata:
 spec:
   rules:
   {{ if eq .Values.data.environment.STAGE "production" }}
-  - host: demo.api.rex.vision
+  - host: demo.api.dragonchain.com
   {{ else }}
-  - host: demo-development.api.rex.vision
+  - host: demo-development.api.dragonchain.com
   {{end}}
     http:
       paths:

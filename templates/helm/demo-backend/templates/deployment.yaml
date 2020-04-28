@@ -29,12 +29,22 @@ spec:
           envFrom:
             - configMapRef:
                 name: "{{ .Release.Name }}-demo-backend"
-          # env:
-          #   - name: 
-          #     valueFrom:
-          #       secretKeyRef:
-          #         name:
-          #         key: SecretString
+          env:
+            - name: CHAIN_DETAILS
+              valueFrom:
+                secretKeyRef:
+                  name: "chain-details"
+                  key: SecretString
+            - name: TWITTER_TOKEN 
+              valueFrom:
+                secretKeyRef:
+                  name: "twitter-token"
+                  key: SecretString
+            - name: L5_CHAINS
+              valueFrom:
+                secretKeyRef:
+                  name: "l5-chains"
+                  key: SecretString
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
