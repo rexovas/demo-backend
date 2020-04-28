@@ -39,9 +39,9 @@ spec:
               serviceName: {{ $fullName }}-service
               servicePort: {{ $port }}
     {{ if eq $stage "production" }}
-    - host: {{"www."}}{{ $host }}{{ $domain }}
+    - host: {{'www.'}}{{ $host }}{{ $domain }}
     {{ else }}
-    - host: {{"www."}}{{ $host }}-{{ $stage }}{{ $domain }}
+    - host: {{'www.'}}{{ $host }}-{{ $stage }}{{ $domain }}
     {{ end }}
     - host: 
       http:
