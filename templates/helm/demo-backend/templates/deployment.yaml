@@ -19,7 +19,6 @@ spec:
       labels:
         app.kubernetes.io/name: {{ .Release.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
-        name: {{ .Release.Name }} ## TEST TO SEE IF PODS HAVE NAME LABEL
       annotations:
         iam.amazonaws.com/role: {{ .Values.data.IAM_ROLE }}
     spec:
