@@ -127,6 +127,14 @@ Resources:
           - Name: STAGE
             Type: PLAINTEXT
             Value: production
+          - Name: HOST
+            Value: demo
+          - Name: DOMAIN
+            Value: .api.rex.vision
+          - Name: NAME
+            Value: demo-backend
+          - Name: PORT
+            Value: 5000
         PrivilegedMode: true
       Source:
         Type: CODEPIPELINE
@@ -189,7 +197,7 @@ Resources:
                 - 'cloudformation:*'
                 - 'ec2:*'
                 - 'iam:*'
-                # - 'route53:*'
+                - 'route53:*'
                 Effect: Allow
                 Resource: '*'
               - Action:
