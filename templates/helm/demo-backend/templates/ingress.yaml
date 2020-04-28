@@ -1,5 +1,5 @@
 {{- if .Values.ingress.enabled -}}
-{{- $fullName := include "demo-backend.fullname" . -}}
+{{- $fullName := include "fullname" . -}}
 {{- $ingressPaths := .Values.ingress.paths -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -7,7 +7,7 @@ metadata:
   name: demo-backend-{{ .Values.data.environment.STAGE }}-ingress
   labels:
     app.kubernetes.io/name: {{ .Release.Name }}
-    helm.sh/chart: {{ include "demo-backend.chart" . }}
+    helm.sh/chart: {{ include "chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
   {{- with .Values.ingress.annotations }}
