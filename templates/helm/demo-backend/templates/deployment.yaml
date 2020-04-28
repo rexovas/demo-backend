@@ -52,6 +52,22 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
 ---
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: "{{ .Release.Name }}"
+#   labels:
+#     id: {{ .Release.Name }}
+#     kind: configMap
+#     app.kubernetes.io/component: api
+# data:
+# {{ toYaml .Values.data.environment | indent 2 }}
+#   {{- if and .Values.aws.secret_key .Values.aws.access_key_id }}
+#   AWS_ACCESS_KEY_ID: "{{ .Values.aws.access_key_id }}"
+#   AWS_SECRET_ACCESS_KEY: "{{ .Values.aws.secret_key }}"
+#   AWS_DEFAULT_REGION: "{{ .Values.aws.region }}"
+#   {{- end }}
+# ---
 
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
