@@ -1,7 +1,7 @@
 Description: Demo Backend user, role and S3 bucket
 
 Parameters:
-  Stage:
+  stage:
     Type: String
     Default: "development"
 
@@ -13,18 +13,10 @@ Parameters:
     Type: String
     Default: "900031763146"
 
-  Host:
-    Type: String
-    Default: "demo"
-
-  Domain:
-    Type: String
-    Default: ".api.rex.vision"
-
 Conditions:
   isProd:
     Fn::Equals:
-      - Ref: Stage
+      - Ref: stage
       - "production"
 
 Resources:
@@ -39,31 +31,8 @@ Resources:
             - Fn::Join:
                 - ''
                 - - demo-
-                  - Ref: Stage
+                  - Ref: stage
                   - .api.rex.vision
-        Type: CNAME
-        ResourceRecords:
-          - "stargate.rex.vision"
-        TTL: "30" # set to 300 once tested
-    demoBackendWwwRoute53:
-      Type: AWS::Route53::RecordSet
-      Properties:
-        HostedZoneId: Z050060699L3CKSWFLIF
-        Name:
-          Fn::If:
-            - isProd
-            - Fn::Join:
-                - ''
-                - - www.
-                  - Ref: Host
-                  - Ref: Domain
-            - Fn::Join:
-                - ''
-                - - www.
-                  - Ref: Host
-                  - '' 
-                  - Ref: Stage
-                  - Ref: Domain
         Type: CNAME
         ResourceRecords:
           - "stargate.rex.vision"
@@ -81,7 +50,7 @@ Resources:
           Fn::Join:
             - "-"
             - - "demo-backend"
-              - Ref: Stage
+              - Ref: stage
 
     # demoBackendPolicy:
     #   Type: AWS::IAM::Policy
@@ -90,7 +59,7 @@ Resources:
     #       Fn::Join:
     #         - "-"
     #         - - demo-backend-policy
-    #           - Ref: Stage
+    #           - Ref: stage
     #     Roles:
     #       - Ref: demoBackendRole
     #     PolicyDocument:

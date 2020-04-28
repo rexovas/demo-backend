@@ -195,7 +195,7 @@ Resources:
                 - 'cloudformation:*'
                 - 'ec2:*'
                 - 'iam:*'
-                - 'route53:*'
+                # - 'route53:*'
                 Effect: Allow
                 Resource: '*'
               - Action:
