@@ -9,8 +9,8 @@ image:
   # tag: development-0.0.2
   pullPolicy: Always
 
-ingress:
-  enabled: true
+# ingress:
+#   enabled: true
 
 service:
   # type: ClusterIP
