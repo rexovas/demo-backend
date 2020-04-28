@@ -1,10 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ .Release.Name }}-deployment
   labels:
     app.kubernetes.io/name: {{ .Release.Name }}
-    helm.sh/chart: {{ include "demo-backend.chart" . }}
+    # helm.sh/chart: {{ include "demo-backend.chart" . }}
+    helm.sh/chart: {{ .Release.chart }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/component: api
