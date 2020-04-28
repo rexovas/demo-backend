@@ -1,20 +1,19 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "fullname" . -}}
-{{- $chart := include "chart" . -}}
 {{- $ingressPaths := .Values.ingress.paths -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ .Release.Name }}-ingress
+  name: demo-backend-{{ .Values.data.environment.STAGE }}-ingress
   labels:
     app.kubernetes.io/name: {{ .Release.Name }}
-    helm.sh/chart: {{ $chart }}
+    helm.sh/chart: {{ include "chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-  # {{- with .Values.ingress.annotations }}
-  # annotations:
-  #   {{- toYaml . | nindent 4 }}
-  # {{- end }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   rules:
   {{ if eq .Values.data.environment.STAGE "production" }}
@@ -25,6 +24,6 @@ spec:
     http:
       paths:
         - backend:
-            serviceName: {{ $fullName }}-service
+            serviceName: demo-backend-{{ .Values.data.environment.STAGE }}
             servicePort: 3000 
 {{- end }}
