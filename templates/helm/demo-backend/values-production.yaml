@@ -7,7 +7,8 @@ replicaCount: 3
 image:
   repository: 900031763146.dkr.ecr.us-east-1.amazonaws.com/demo-backend
   tag: production-0.0.1
-  pullPolicy: IfNotPresent
+  # pullPolicy: IfNotPresent
+  pullPolicy: always
 
 ingress:
   enabled: true
