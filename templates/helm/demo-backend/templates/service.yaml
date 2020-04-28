@@ -5,7 +5,8 @@ metadata:
   name: {{ .Release.Name }}-service
   labels:
     app.kubernetes.io/name: {{ .Release.Name }}
-    helm.sh/chart: {{ include "demo-backend.chart" . }}
+    # helm.sh/chart: {{ include "demo-backend.chart" . }}
+    helm.sh/chart: {{ include "{{ .Release.Name }}.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
