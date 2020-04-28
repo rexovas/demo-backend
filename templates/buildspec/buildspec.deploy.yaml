@@ -25,4 +25,4 @@ phases:
       - kops export kubecfg ue1-k8s.rex.vision --state s3://rexvision-k8s-state-store
 
       - kubectl apply -f ./templates/helm/demo-backend/namespace-$STAGE.yaml
-      - helm upgrade --install demo-backend --namespace demo-backend-$STAGE -f ./templates/helm/demo-backend/values-$STAGE.yaml ./templates/helm/demo-backend --set image.tag=$TAG --debug
+      - helm upgrade --install demo-backend-$STAGE --namespace demo-backend-$STAGE -f ./templates/helm/demo-backend/values-$STAGE.yaml ./templates/helm/demo-backend --set image.tag=$TAG --debug
