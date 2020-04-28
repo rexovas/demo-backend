@@ -24,6 +24,6 @@ phases:
       - docker push 900031763146.dkr.ecr.us-east-1.amazonaws.com/$NAME:$TAG
       - kops export kubecfg ue1-k8s.rex.vision --state s3://rexvision-k8s-state-store
 
-      - aws cloudformation deploy --template-file ./templates/cloudformation/cft.service.yaml --stack-name $NAME-config-$STAGE --parameter-overrides Stage=$STAGE --capabilities CAPABILITY_NAMED_IAM --no-fail-on-empty-changeset
+      - aws cloudformation deploy --template-file ./templates/cloudformation/cft.service.yaml --stack-name $NAME-config-$STAGE --parameter-overrides "stage=$STAGE" --capabilities CAPABILITY_NAMED_IAM --no-fail-on-empty-changeset
       - kubectl apply -f ./templates/helm/$NAME/namespace-$STAGE.yaml
       - helm upgrade --install $NAME --namespace $NAME-$STAGE -f ./templates/helm/$NAME/values-$STAGE.yaml ./templates/helm/$NAME --set image.tag=$TAG  --set ingress.host=$HOST --set ingress.domain=$DOMAIN --debug
