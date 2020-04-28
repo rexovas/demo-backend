@@ -25,4 +25,5 @@ phases:
       - kops export kubecfg ue1-k8s.rex.vision --state s3://rexvision-k8s-state-store
 
       # - aws cloudformation deploy --template-file ./cloudformation/cft.service.yml --stack-name eternal-service-$STAGE --parameter-overrides "Stage=$STAGE" --capabilities CAPABILITY_NAMED_IAM --no-fail-on-empty-changeset
-      - helm upgrade --install demo-backend-$STAGE --namespace demo-backend-$STAGE -f ./templates/helm/demo-backend/values-$STAGE.yaml ./templates/helm/demo-backend --set image.tag=$TAG --debug
+      - kubectl apply -f ./templates/helm/demo-backend/namespace-$STAGE
+      - helm upgrade --install demo-backend --namespace demo-backend-$STAGE -f ./templates/helm/demo-backend/values-$STAGE.yaml ./templates/helm/demo-backend --set image.tag=$TAG --debug
