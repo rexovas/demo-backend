@@ -11,8 +11,6 @@ RUN apt-get update && \
     apt-get install redis-server -y && \
     pip install --upgrade pip && \
     pip install -r requirements.txt
-# If you are building your code for production
-# RUN npm install --only=production
 
 ARG port
 EXPOSE $port
