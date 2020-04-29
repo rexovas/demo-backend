@@ -161,7 +161,7 @@ Resources:
         PrivilegedMode: true
       Source:
         Type: CODEPIPELINE
-        BuildSpec: scripts/buildspec/buildspec.deploy.yaml
+        BuildSpec: templates/buildspec/buildspec.deploy.yaml
       TimeoutInMinutes: 10
 
   CodePipelineRole:
