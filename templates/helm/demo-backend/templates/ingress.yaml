@@ -25,5 +25,5 @@ spec:
       paths:
         - backend:
             serviceName: {{ $fullName }}
-            servicePort: {{ .Values.service.port }}
+            servicePort: {{ .Values.deployment.port }}
 {{- end }}

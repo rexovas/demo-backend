@@ -1,3 +1,5 @@
+{{- $port := .Values.deployment.port -}}
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -37,7 +39,7 @@ spec:
           #         key: SecretString
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: {{ $port }} 
               protocol: TCP
           # livenessProbe:
           #   httpGet:
@@ -89,4 +91,4 @@ spec:
     - podSelector: {} # Allow ALL pods access to these pods (over exposed ports)
     ports:
     - protocol: TCP
-      port: 3000 # This needs to match the 'containerPort' of the deployment
+      port: {{ $port }} # This needs to match the 'containerPort' of the deployment

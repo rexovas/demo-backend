@@ -12,7 +12,7 @@ ingress:
   enabled: true
 
 service:
-  port: 8000 
+  port: 8000
 
 aws:
   access_key:
