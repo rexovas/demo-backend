@@ -16,13 +16,9 @@ Parameters:
   Domain: 
     Type: String
     Default: .api.rex.vision
-  # GitHubDeployKey:
-  #   Type: AWS::SSM::Parameter::Value<String>
-  #   Default: 
-  #     Fn::Join:
-  #       - ''
-  #       - - Ref: Name
-  #         - DeployKey
+  GitHubDeployKey:
+    Type: String 
+    Default: resolve:ssm-secure:deploy-key:1
 
 Conditions:
   isProd:
@@ -359,7 +355,10 @@ Resources:
                     - isProd
                     - master 
                     - development
-                OAuthToken: 'no-token-required'
+                OAuthToken: !Sub
+                  - '{{resolve:secretsmanager:${NAME}-deploy-key}}'
+                  - { NAME: !Ref Name }
+                # OAuthToken: '{{resolve:secretsmanager:SecretString:demo-backend-deploy-key}}'
               OutputArtifacts:
                 - Name: demoBackendCode
               RunOrder: 1
