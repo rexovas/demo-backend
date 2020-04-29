@@ -2,6 +2,9 @@
 
 # export VERSION=$(cat package.json | jq -r '.version')
 STAGE='production'
+NAME='demo-backend'
+PORT=5000
+HOST='demo'
 
 aws cloudformation deploy \
 --stack-name demo-backend-cicd \

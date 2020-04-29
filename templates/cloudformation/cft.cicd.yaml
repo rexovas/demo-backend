@@ -3,19 +3,19 @@ Description: CI/CD Pipeline for Demo Backend Production
 Parameters:
   Stage:
     Type: String
-    Value: development
+    Default: development
   Name:
     Type: String
-    Value: SERVICE NAME
+    Default: SERVICE NAME
   Port:
     Type: Number
-    Value: 5000
+    Default: 5000
   Host:
     Type: String
-    Value: HOSTNAME
+    Default: HOSTNAME
   Domain: 
     Type: String
-    Value: .api.rex.vision
+    Default: .api.rex.vision
   # GitHubDeployKey:
   #   Type: AWS::SSM::Parameter::Value<String>
   #   Default: 
@@ -151,15 +151,20 @@ Resources:
         EnvironmentVariables:
           - Name: STAGE
             Type: PLAINTEXT
-            Value: Ref: Stage
+            Value: 
+              Ref: Stage
           - Name: HOST
-            Value: Ref: Host 
+            Value: 
+              Ref: Host 
           - Name: DOMAIN
-            Value: Ref: Domain
+            Value: 
+              Ref: Domain
           - Name: NAME
-            Value: Ref: Name 
+            Value: 
+              Ref: Name 
           - Name: PORT
-            Value: Ref: Port 
+            Value: 
+              Ref: Port 
         PrivilegedMode: true
       Source:
         Type: CODEPIPELINE
@@ -347,7 +352,8 @@ Resources:
                 Version: 1
               Configuration:
                 Owner: rexovas
-                Repo: Ref: Name
+                Repo: 
+                  Ref: Name
                 Branch: 
                   Fn::If:
                     - isProd
