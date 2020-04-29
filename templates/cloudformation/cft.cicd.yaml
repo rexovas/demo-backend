@@ -6,19 +6,16 @@ Parameters:
     Default: development
   Name:
     Type: String
-    Default: SERVICE NAME
-  Port:
-    Type: Number
-    Default: 5000
-  Host:
-    Type: String
-    Default: HOSTNAME
-  Domain: 
-    Type: String
-    Default: .api.rex.vision
-  GitHubDeployKey:
-    Type: String 
-    Default: resolve:ssm-secure:deploy-key:1
+    Default: Name
+  # Port:
+  #   Type: Number
+  #   Default: 5000
+  # Host:
+  #   Type: String
+  #   Default: HOSTNAME
+  # Domain: 
+  #   Type: String
+  #   Default: .api.rex.vision
 
 Conditions:
   isProd:
@@ -149,18 +146,18 @@ Resources:
             Type: PLAINTEXT
             Value: 
               Ref: Stage
-          - Name: HOST
-            Value: 
-              Ref: Host 
-          - Name: DOMAIN
-            Value: 
-              Ref: Domain
-          - Name: NAME
-            Value: 
-              Ref: Name 
-          - Name: PORT
-            Value: 
-              Ref: Port 
+          # - Name: HOST
+          #   Value: 
+          #     Ref: Host 
+          # - Name: DOMAIN
+          #   Value: 
+          #     Ref: Domain
+          # - Name: NAME
+          #   Value: 
+          #     Ref: Name 
+          # - Name: PORT
+          #   Value: 
+          #     Ref: Port 
         PrivilegedMode: true
       Source:
         Type: CODEPIPELINE

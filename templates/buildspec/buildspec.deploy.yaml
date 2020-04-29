@@ -15,16 +15,15 @@ phases:
       - curl -LO https://git.io/get_helm.sh && chmod 700 ./get_helm.sh && ./get_helm.sh --version v3.2.0 && rm get_helm.sh
   build:
     commands:
-      # - export VERSION=$(node -e "console.log(require('./package.json').version)")
-      # - if [ -z "$VERSION" ]; then echo "VERSION variable is missing"; exit 1; fi
-      - export TAG="$STAGE-1.0.0"
-      # - docker build . -t 900031763146.dkr.ecr.us-east-1.amazonaws.com/$NAME:$TAG
-      - docker build . -t 900031763146.dkr.ecr.us-east-1.amazonaws.com/demo-backend:$TAG --build-arg port=${PORT}
+      - source scripts/environment.sh
+
+      - docker build . -t 900031763146.dkr.ecr.us-east-1.amazonaws.com/$NAME:$TAG --build-arg port=${PORT}
 
       - $(aws ecr get-login --no-include-email)
       - docker push 900031763146.dkr.ecr.us-east-1.amazonaws.com/$NAME:$TAG
       - kops export kubecfg ue1-k8s.rex.vision --state s3://rexvision-k8s-state-store
 
       - aws cloudformation deploy --template-file ./templates/cloudformation/cft.service.yaml --stack-name $NAME-config-$STAGE --parameter-overrides Stage=$STAGE --capabilities CAPABILITY_NAMED_IAM --no-fail-on-empty-changeset
-      - kubectl apply -f ./templates/helm/$NAME/namespace-$STAGE.yaml
-      - helm upgrade --install $NAME --namespace $NAME-$STAGE -f ./templates/helm/$NAME/values-$STAGE.yaml ./templates/helm/$NAME --set image.tag=$TAG  --set ingress.host=$HOST --set ingress.domain=$DOMAIN --set deployment.port=$PORT --debug
+      - ./scripts/install.sh
+      # - kubectl apply -f ./templates/helm/$NAME/namespace-$STAGE.yaml
+      # - helm upgrade --install $NAME --namespace $NAME-$STAGE -f ./templates/helm/$NAME/values-$STAGE.yaml ./templates/helm/$NAME --set image.tag=$TAG  --set ingress.host=$HOST_PREFIX --set ingress.domain=$DOMAIN --set deployment.port=$PORT --debug
