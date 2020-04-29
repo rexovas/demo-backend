@@ -1,9 +1,34 @@
-Description: CI/CD Pipeline for Demo Backend
+Description: CI/CD Pipeline for Demo Backend Production
 
-# Parameters:
-#   GitHubSecret:
-#     Type: AWS::SSM::Parameter::Value<String>
-#     Default: GitHubReadOnlyToken
+Parameters:
+  Stage:
+    Type: String
+    Value: development
+  Name:
+    Type: String
+    Value: SERVICE NAME
+  Port:
+    Type: Number
+    Value: 5000
+  Host:
+    Type: String
+    Value: HOSTNAME
+  Domain: 
+    Type: String
+    Value: .api.rex.vision
+  # GitHubDeployKey:
+  #   Type: AWS::SSM::Parameter::Value<String>
+  #   Default: 
+  #     Fn::Join:
+  #       - ''
+  #       - - Ref: Name
+  #         - DeployKey
+
+Conditions:
+  isProd:
+    Fn::Equals:
+      - Ref: Stage
+      - "production"
 
 Resources:
   ECR:
@@ -126,15 +151,15 @@ Resources:
         EnvironmentVariables:
           - Name: STAGE
             Type: PLAINTEXT
-            Value: production
+            Value: Ref: Stage
           - Name: HOST
-            Value: demo
+            Value: Ref: Host 
           - Name: DOMAIN
-            Value: .api.rex.vision
+            Value: Ref: Domain
           - Name: NAME
-            Value: demo-backend
+            Value: Ref: Name 
           - Name: PORT
-            Value: 5000
+            Value: Ref: Port 
         PrivilegedMode: true
       Source:
         Type: CODEPIPELINE
@@ -175,7 +200,11 @@ Resources:
   CodeBuildRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: demoBackend-CodebuildRole
+      RoleName: 
+        Fn::Join:
+          - ''
+          - - Ref: Name
+            - -CodebuildRole
       AssumeRolePolicyDocument:
         Statement:
         - Action: ['sts:AssumeRole']
@@ -208,7 +237,11 @@ Resources:
   ArtifactBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: demo-backend-codebuild-artifacts
+      BucketName: 
+        Fn::Join:
+          - ''
+          - - Ref: Name
+            - -codebuild-artifacts
 
   # StagingCodePipeline:
   #   Type: AWS::CodePipeline::Pipeline
@@ -314,11 +347,13 @@ Resources:
                 Version: 1
               Configuration:
                 Owner: rexovas
-                Repo: demo-backend
-                Branch: development 
-                # Branch: master 
-                OAuthToken: 'test'
-                #   Ref: GitHubSecret
+                Repo: Ref: Name
+                Branch: 
+                  Fn::If:
+                    - isProd
+                    - master 
+                    - development
+                OAuthToken: 'no-token-required'
               OutputArtifacts:
                 - Name: demoBackendCode
               RunOrder: 1
