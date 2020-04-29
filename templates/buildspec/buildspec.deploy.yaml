@@ -15,7 +15,7 @@ phases:
       - curl -LO https://git.io/get_helm.sh && chmod 700 ./get_helm.sh && ./get_helm.sh --version v3.2.0 && rm get_helm.sh
   build:
     commands:
-      - source scripts/environment.sh
+      - ./scripts/environment.sh
 
       - docker build . -t 900031763146.dkr.ecr.us-east-1.amazonaws.com/$NAME:$TAG --build-arg port=${PORT}
 
