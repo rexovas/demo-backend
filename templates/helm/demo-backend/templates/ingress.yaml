@@ -1,29 +1,44 @@
-{{- if .Values.ingress.enabled -}}
-{{- $fullName := include "demo-backend.fullname" . -}}
-{{- $ingressPaths := .Values.ingress.paths -}}
+{{- $fullName := include "fullname" . -}}
+{{- $host := .Values.ingress.host -}}
+{{- $domain := .Values.ingress.domain -}}
+{{- $port := .Values.deployment.port -}}
+{{- $stage := .Values.data.environment.STAGE -}}
+
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: demo-backend-{{ .Values.data.environment.STAGE }}-ingress
+  name: {{ .Release.Name }}-ingress
   labels:
     app.kubernetes.io/name: {{ .Release.Name }}
-    helm.sh/chart: {{ include "demo-backend.chart" . }}
+    helm.sh/chart: {{ include "chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-  {{- with .Values.ingress.annotations }}
   annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      if ($host = 'www.{{ $host }}{{ $domain }}') {
+        return 308 $scheme://{{ $host }}{{ $domain }}$request_uri;
+      }
 spec:
   rules:
-  {{ if eq .Values.data.environment.STAGE "production" }}
-  - host: demo.api.rex.vision
-  {{ else }}
-  - host: demo-development.api.rex.vision
-  {{end}}
-    http:
-      paths:
-        - backend:
-            serviceName: demo-backend-{{ .Values.data.environment.STAGE }}
-            servicePort: 3000 
-{{- end }}
+    {{ if eq $stage "production" }}
+    - host: {{ $host }}{{ $domain }}
+    {{ else }}
+    - host: {{ $host }}-{{ $stage }}{{ $domain }}
+    {{ end }}
+      http:
+        paths:
+          - backend:
+              serviceName: {{ $fullName }}-service
+              servicePort: {{ $port }}
+    {{ if eq $stage "production" }}
+    - host: {{ printf "www.%s%s" $host $domain }}
+    {{ else }}
+    - host: {{ printf "www.%s-%s%s" $host $stage $domain }}
+    {{ end }}
+      http:
+        paths:
+          - backend:
+              serviceName: {{ $fullName }}-service
+              servicePort: {{ $port }}
+              

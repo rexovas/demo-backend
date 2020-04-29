@@ -1,10 +1,12 @@
-apiVersion: apps/v1beta2
+{{- $port := .Values.deployment.port -}}
+
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}
   labels:
     app.kubernetes.io/name: {{ .Release.Name }}
-    helm.sh/chart: {{ include "demo-backend.chart" . }}
+    helm.sh/chart: {{ include "chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/component: api
@@ -19,51 +21,50 @@ spec:
       labels:
         app.kubernetes.io/name: {{ .Release.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
-      annotations:
-        iam.amazonaws.com/role: {{ .Values.data.IAM_ROLE }}
+      # annotations:
+      #  iam.amazonaws.com/role: {{ .Values.data.IAM_ROLE }}{{ .Release.Name }}-{{ .Values.data.environment.STAGE }}
     spec:
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: {{ .Values.image.repository }}{{ .Release.Name }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          envFrom:
-            - configMapRef:
-                name: "{{ .Release.Name }}-demo-backend"
+          # envFrom:
+          #  - configMapRef:
+          #      name: "{{ .Release.Name }}"
           # env:
-          #   - name: 
-          #     valueFrom:
-          #       secretKeyRef:
-          #         name:
-          #         key: SecretString
+          #  - name: 
+          #    valueFrom:
+          #      secretKeyRef:
+          #        name:
+          #        key: SecretString
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: {{ $port }} 
               protocol: TCP
           livenessProbe:
             httpGet:
               path: /health
-              port: {{ .Values.service.port }}
+              port: {{ $port }}
             initialDelaySeconds: 10
           readinessProbe:
             httpGet:
               path: /health
-              port: {{ .Values.service.port }}
+              port: {{ $port }}
             initialDelaySeconds: 10
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
 ---
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: "{{ .Release.Name }}-demo-backend"
-  labels:
-    id: {{ .Release.Name }}
-    kind: configMap
-    app.kubernetes.io/component: api
-data:
-{{ toYaml .Values.data.environment | indent 2 }}
-  {{- if and .Values.aws.secret_key .Values.aws.access_key_id }}
-  AWS_ACCESS_KEY_ID: "{{ .Values.aws.access_key_id }}"
-  AWS_SECRET_ACCESS_KEY: "{{ .Values.aws.secret_key }}"
-  AWS_DEFAULT_REGION: "{{ .Values.aws.region }}"
-  {{- end }}
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: "{{ .Release.Name }}"
+#   labels:
+#     id: {{ .Release.Name }}
+#     kind: configMap
+#     app.kubernetes.io/component: api
+# data:
+# {{ toYaml .Values.data.environment | indent 2 }}
+#   {{- if and .Values.aws.secret_key .Values.aws.access_key_id }}
+#   AWS_ACCESS_KEY_ID: "{{ .Values.aws.access_key_id }}"
+#   AWS_SECRET_ACCESS_KEY: "{{ .Values.aws.secret_key }}"
+#   AWS_DEFAULT_REGION: "{{ .Values.aws.region }}"
+#   {{- end }}
+# ---

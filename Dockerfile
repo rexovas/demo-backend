@@ -1,4 +1,4 @@
-FROM node:8
+FROM python:3.8
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -7,10 +7,13 @@ WORKDIR /usr/src/app
 COPY . .
 
 RUN apt-get update && \
+    # apt-get upgrade -y && \
     apt-get install redis-server -y && \
-    npm install
+    pip install --upgrade pip && \
+    pip install -r requirements.txt
 # If you are building your code for production
 # RUN npm install --only=production
 
-EXPOSE 3000
+ARG port
+EXPOSE $port
 CMD [ "sh", "scripts/start.sh" ]
