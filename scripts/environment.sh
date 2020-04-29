@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-export STAGE="production"
 export NAME="demo-backend"
 # - export VERSION=$(node -e "console.log(require('./package.json').version)")
 export VERSION="1.0.0"
