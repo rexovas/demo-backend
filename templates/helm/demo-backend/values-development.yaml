@@ -5,6 +5,5 @@
 replicaCount: 1
 
 data:
-  IAM_ROLE: arn:aws:iam::900031763146:role/demo-backend-development
   environment:
     STAGE: "development"

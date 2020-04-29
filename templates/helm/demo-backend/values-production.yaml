@@ -8,7 +8,6 @@ replicaCount: 3
   # pullPolicy: IfNotPresent
 
 data:
-  IAM_ROLE: arn:aws:iam::900031763146:role/demo-backend-production
   environment:
     STAGE: "production"
 
