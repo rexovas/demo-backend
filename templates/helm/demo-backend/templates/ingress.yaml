@@ -24,6 +24,6 @@ spec:
     http:
       paths:
         - backend:
-            serviceName: demo-backend-{{ .Values.data.environment.STAGE }}
-            servicePort: 3000 
+            serviceName: {{ $fullName }}
+            servicePort: {{ .Values.service.port }}
 {{- end }}
