@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 source scripts/environment.sh
+STAGE="production"
 
 aws cloudformation deploy \
 --stack-name demo-backend-cicd \
