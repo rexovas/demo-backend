@@ -25,6 +25,7 @@ def table_data() -> Any:
 
 @cache.cached(query_string=True)
 def filter_list() -> Any:
+  # TODO HANDLE MISSING FIELD/COLUMN PARAMETER
     column = request.args.get("field").lower()
     query = request.args.get("search")
     df = pd.read_csv(data_file)
