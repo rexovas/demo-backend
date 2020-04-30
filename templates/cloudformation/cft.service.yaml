@@ -38,9 +38,10 @@ Resources:
             - demo.api.rex.vision
             - Fn::Join:
                 - ''
-                - - demo-
+                - - Ref: Host
+                  - '-'
                   - Ref: Stage
-                  - .api.rex.vision
+                  - Ref: Domain
         Type: CNAME
         ResourceRecords:
           - "stargate.rex.vision"
