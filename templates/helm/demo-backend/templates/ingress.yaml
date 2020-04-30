@@ -17,7 +17,7 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/configuration-snippet: |
       if ($host = 'www.{{ $host }}{{ $domain }}') {
-        return 308 $scheme://{{ $host }}{{ $domain }}$request_uri;
+        return 308 https://{{ $host }}{{ $domain }}$request_uri;
       }
 spec:
   rules:
