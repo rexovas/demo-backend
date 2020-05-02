@@ -8,5 +8,5 @@ export HOSTED_ZONE="Z050060699L3CKSWFLIF"
 export TOP_DOMAIN=".rex.vision"
 export HOST="demo"
 export DOMAIN=".api.rex.vision"
-export PORT=5000
+export PORT=8000
 export TAG="$STAGE-$VERSION"
