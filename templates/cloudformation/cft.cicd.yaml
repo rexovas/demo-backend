@@ -350,7 +350,7 @@ Resources:
                 Branch: 
                   Fn::If:
                     - isProd
-                    - gunicorn 
+                    - master 
                     - development
                 OAuthToken: !Sub
                   - '{{resolve:secretsmanager:${NAME}-deploy-key}}'
