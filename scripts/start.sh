@@ -2,5 +2,5 @@
 redis-server &
 sleep 5
 # export FLASK_APP=src/app.py
-gunicorn -w 4 -b 0.0.0.0 src:app
+gunicorn -w 4 -b 0.0.0.0 src:app --log-level debug
 # flask run -h 0.0.0.0
