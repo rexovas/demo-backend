@@ -1,7 +1,7 @@
 {{- $fullName := include "fullname" . -}}
 {{- $host := .Values.ingress.host -}}
 {{- $domain := .Values.ingress.domain -}}
-{{- $port := .Values.deployment.port -}}
+{{- $port := .Values.service.port -}}
 {{- $stage := .Values.data.environment.STAGE -}}
 
 apiVersion: extensions/v1beta1

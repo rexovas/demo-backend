@@ -9,7 +9,6 @@ data_file = Path(__file__).parent / Path(
     "../data/NCHS_-_Leading_Causes_of_Death__United_States.csv"
 )
 
-
 def health_check() -> str:
     return "pong"
 
